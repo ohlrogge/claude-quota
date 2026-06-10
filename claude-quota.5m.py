@@ -394,16 +394,16 @@ def reset_str(iso):
 
 def color(utilization):
     if utilization >= 90:
-        return " | color=red"
+        return " color=red"
     if utilization >= 70:
-        return " | color=orange"
+        return " color=orange"
     return ""
 
 
 def window_line(label, window):
     u = window["utilization"]
     return (f"{label:<7} {meter(u):<10} {u:>3.0f}%  "
-            f"{reset_str(window.get('resets_at'))}{color(u)} | font=Menlo")
+            f"{reset_str(window.get('resets_at'))} | font=Menlo{color(u)}")
 
 
 def main():
