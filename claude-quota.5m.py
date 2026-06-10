@@ -379,7 +379,7 @@ def menu_bar_image(results):
 
 def meter(utilization):
     filled = min(10, max(0, round(utilization / 10)))
-    return "█" * filled + "░" * (10 - filled)
+    return "█" * filled
 
 
 def reset_str(iso):
@@ -402,7 +402,7 @@ def color(utilization):
 
 def window_line(label, window):
     u = window["utilization"]
-    return (f"{label:<7} {meter(u)} {u:>3.0f}%  "
+    return (f"{label:<7} {meter(u):<10} {u:>3.0f}%  "
             f"{reset_str(window.get('resets_at'))}{color(u)} | font=Menlo")
 
 
