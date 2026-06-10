@@ -228,11 +228,20 @@ def draw_letter(pixels, x0, y0, ch, color, scale=2):
 
 
 def draw_logo(pixels, x0, y0, scale=2):
+    # white rounded badge behind the starburst, for contrast on dark menu bars
+    size = len(LOGO) * scale + 4
+    fill_rect(pixels, x0, y0, x0 + size, y0 + size, OUTLINE)
+    for cx in (x0, x0 + size - 1):
+        for cy in (y0, y0 + size - 1):
+            dx = 1 if cx == x0 else -1
+            dy = 1 if cy == y0 else -1
+            for px, py in [(cx, cy), (cx + dx, cy), (cx, cy + dy)]:
+                pixels[py][px] = (0, 0, 0, 0)
     for r, row in enumerate(LOGO):
         for c, v in enumerate(row):
             if v == "X":
-                fill_rect(pixels, x0 + c * scale, y0 + r * scale,
-                          x0 + (c + 1) * scale, y0 + (r + 1) * scale,
+                fill_rect(pixels, x0 + 2 + c * scale, y0 + 2 + r * scale,
+                          x0 + 2 + (c + 1) * scale, y0 + 2 + (r + 1) * scale,
                           CLAUDE_ORANGE)
 
 
@@ -285,12 +294,12 @@ def draw_battery(pixels, x, y, utilization, error, text=None, fill_color=None):
 
 
 def menu_bar_image(results):
-    letter_w, gap, logo_w = 10, 4, 30  # logo: 22 px + 8 px gap
+    letter_w, gap, logo_w = 10, 4, 34  # logo badge: 26 px + 8 px gap
     cell_w = letter_w + gap + 66 + 5  # letter + gap + body + nub
     n = len(results)
     width, height = logo_w + n * cell_w + (n - 1) * 12, 32
     pixels = [[(0, 0, 0, 0)] * width for _ in range(height)]
-    draw_logo(pixels, 0, 5)
+    draw_logo(pixels, 0, 3)
     for i, (name, usage, err) in enumerate(results):
         x = logo_w + i * (cell_w + 12)
         five = (usage or {}).get("five_hour")
