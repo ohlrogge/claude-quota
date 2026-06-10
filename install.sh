@@ -23,8 +23,15 @@ if [ -z "$PLUGIN_DIR" ]; then
 fi
 mkdir -p "$PLUGIN_DIR"
 
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-cp "$SCRIPT_DIR/claude-quota.5m.py" "$PLUGIN_DIR/"
+# Copy the plugin from a local checkout, or download it when piped (curl | bash)
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)
+if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/claude-quota.5m.py" ]; then
+    cp "$SCRIPT_DIR/claude-quota.5m.py" "$PLUGIN_DIR/"
+else
+    curl -fsSL \
+        "https://raw.githubusercontent.com/grzegorz-raczek-unit8/claude-quota/main/claude-quota.5m.py" \
+        -o "$PLUGIN_DIR/claude-quota.5m.py"
+fi
 chmod +x "$PLUGIN_DIR/claude-quota.5m.py"
 
 open -a SwiftBar

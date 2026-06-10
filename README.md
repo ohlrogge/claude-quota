@@ -20,6 +20,15 @@ account, like this:
 - Refreshes every 5 minutes (SwiftBar filename convention) plus a manual
   "Refresh now" entry.
 
+## Quick install
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/grzegorz-raczek-unit8/claude-quota/main/install.sh | bash
+```
+
+Requires macOS and [Homebrew](https://brew.sh). When macOS shows a Keychain
+permission dialog on the first refresh, click **Always Allow**.
+
 ## How it works
 
 The plugin reads your Claude Code OAuth token from the macOS Keychain
@@ -30,10 +39,7 @@ uses. No passwords, no scraping, no third-party services.
 > **Note:** that endpoint is internal to Claude Code and undocumented, so a
 > future Claude Code change may require a small fix here.
 
-## Install
-
-Requires macOS and [Homebrew](https://brew.sh) (to install
-[SwiftBar](https://github.com/swiftbar/SwiftBar) if you don't have it).
+## Install from a checkout
 
 ```sh
 git clone https://github.com/grzegorz-raczek-unit8/claude-quota.git
@@ -41,9 +47,10 @@ cd claude-quota
 ./install.sh
 ```
 
-When macOS shows a Keychain permission dialog on the first refresh, click
-**Always Allow**. If an account shows ⚠, its token went stale from disuse —
-run that `claude` CLI once and the widget recovers on the next cycle.
+Either install path sets up [SwiftBar](https://github.com/swiftbar/SwiftBar)
+via Homebrew if you don't have it. If an account shows ⚠, its token went
+stale from disuse — run that `claude` CLI once and the widget recovers on the
+next cycle.
 
 ## Accounts
 
