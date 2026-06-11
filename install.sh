@@ -35,6 +35,13 @@ fi
 chmod +x "$PLUGIN_DIR/claude-quota.5m.py"
 
 open -a SwiftBar
+
+# Launch SwiftBar at login so the gauges survive a reboot
+if ! osascript -e 'tell application "System Events" to get the name of every login item' 2>/dev/null | grep -q "SwiftBar"; then
+    osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/SwiftBar.app", hidden:false}' >/dev/null 2>&1 \
+        || echo "Could not add SwiftBar to Login Items — enable 'Launch at Login' in SwiftBar's preferences instead." >&2
+fi
+
 echo
 echo "Installed to $PLUGIN_DIR/claude-quota.5m.py"
 echo "If macOS shows a Keychain dialog, click 'Always Allow' so the widget"
