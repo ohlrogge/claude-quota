@@ -1,2 +1,2 @@
-__pycache__/
-*.pyc
+# Go — ignore compiled binaries built in-tree
+go/claude-quota*
