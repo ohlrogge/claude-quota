@@ -1,6 +1,8 @@
 # claude-quota
 
-Menu bar status gauges for your Claude Code quota — one rounded bar per account, with a live percentage and colour-coded fill.
+A [SwiftBar](https://github.com/swiftbar/SwiftBar) plugin that shows menu bar status gauges for your Claude Code quota — one rounded bar per account, with a live percentage and colour-coded fill.
+
+SwiftBar is a free macOS app that runs scripts and binaries on a timer and displays their output in the menu bar. This plugin is the binary it runs every 5 minutes.
 
 > Forked from [grzegorz-raczek-unit8/claude-quota](https://github.com/grzegorz-raczek-unit8/claude-quota) and rewritten in Go.
 
