@@ -50,30 +50,50 @@ if [ "$INSTALL_CLAUDE" = false ] && [ "$INSTALL_GH" = false ]; then
     fi
 fi
 
+# ---- helpers --------------------------------------------------------------
+# confirm: ask a yes/no question, default yes. When non-interactive (e.g.
+# `curl … | bash`, where there is no one to ask) it assumes yes so the
+# one-liner stays turnkey.
+confirm() {
+    local reply
+    if [ -t 0 ]; then
+        printf "%s [Y/n] " "$1"
+        read -r reply
+        case "$reply" in [Nn]*) return 1 ;; esac
+    fi
+    return 0
+}
+
+# offer_brew_install <display name> <brew args…>: ask before installing a
+# missing dependency via Homebrew. Returns non-zero if it can't or won't.
+offer_brew_install() {
+    local name="$1"; shift
+    local cmd="brew $*"
+    if ! command -v brew >/dev/null; then
+        echo "$name is required, but Homebrew isn't installed (https://brew.sh)." >&2
+        echo "Install Homebrew, then run:  $cmd" >&2
+        return 1
+    fi
+    if confirm "$name is not installed. Install it now with '$cmd'?"; then
+        brew "$@"
+    else
+        echo "Skipped. Install $name yourself with:  $cmd" >&2
+        return 1
+    fi
+}
+
 # ---- prerequisites --------------------------------------------------------
 if ! command -v go >/dev/null 2>&1; then
-    echo "Go is required. Install it from https://go.dev/dl/ and re-run." >&2
-    exit 1
+    offer_brew_install "Go" install go || exit 1
 fi
 
 if [ ! -d "/Applications/SwiftBar.app" ]; then
-    if ! command -v brew >/dev/null; then
-        echo "Homebrew is required to install SwiftBar: https://brew.sh" >&2
-        exit 1
-    fi
-    echo "Installing SwiftBar..."
-    brew install --cask swiftbar
+    offer_brew_install "SwiftBar" install --cask swiftbar || exit 1
 fi
 
 if [ "$INSTALL_GH" = true ]; then
     if ! command -v gh >/dev/null 2>&1; then
-        if command -v brew >/dev/null; then
-            echo "Installing GitHub CLI (gh)..."
-            brew install gh
-        else
-            echo "The pr-review plugin needs the GitHub CLI. Install it from https://cli.github.com" >&2
-            exit 1
-        fi
+        offer_brew_install "GitHub CLI (gh)" install gh || exit 1
     fi
     if ! gh auth status >/dev/null 2>&1; then
         echo "Note: you are not signed in to GitHub. Run 'gh auth login' once so the"

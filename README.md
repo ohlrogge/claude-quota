@@ -1,15 +1,15 @@
 # menu-bar-badges
 
+![menu-bar-badges in the macOS menu bar](docs/menu-bar.png)
+
+*pr-review (left) and claude-quota (right) sitting in the menu bar.*
+
 [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins for the menu bar. The repo ships two:
 
 - **claude-quota** — status gauges for your Claude Code quota, one rounded bar per account.
 - **pr-review** — a badge counting GitHub PRs awaiting your review, with a dropdown of those PRs and your own open PRs.
 
 SwiftBar is a free macOS app that runs scripts and binaries on a timer and displays their output in the menu bar. Each plugin is a compiled Go binary it runs every 5 minutes. Install either or both — the [installer](#quick-install) lets you choose.
-
-![menu-bar-badges in the macOS menu bar](docs/menu-bar.png)
-
-*pr-review (left) and claude-quota (right) sitting in the menu bar.*
 
 > Forked from [grzegorz-raczek-unit8/claude-quota](https://github.com/grzegorz-raczek-unit8/claude-quota) and rewritten in Go.
 
@@ -35,7 +35,7 @@ It uses the GitHub CLI (`gh`), so you need it installed and signed in — see [H
 
 ## Quick install
 
-Requires macOS, [Homebrew](https://brew.sh), and [Go](https://go.dev/dl/). The pr-review plugin also needs the [GitHub CLI](https://cli.github.com) (`gh`), which the installer offers to set up.
+Requires macOS and [Homebrew](https://brew.sh). The installer also needs [Go](https://go.dev/dl/) to build, [SwiftBar](https://github.com/swiftbar/SwiftBar) to run the plugins, and — for pr-review — the [GitHub CLI](https://cli.github.com) (`gh`); when run interactively it asks before installing any that are missing via Homebrew.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ohlrogge/menu-bar-badges/main/install.sh | bash
