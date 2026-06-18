@@ -7,6 +7,10 @@
 
 SwiftBar is a free macOS app that runs scripts and binaries on a timer and displays their output in the menu bar. Each plugin is a compiled Go binary it runs every 5 minutes. Install either or both — the [installer](#quick-install) lets you choose.
 
+![menu-bar-badges in the macOS menu bar](docs/menu-bar.png)
+
+*pr-review (left) and claude-quota (right) sitting in the menu bar.*
+
 > Forked from [grzegorz-raczek-unit8/claude-quota](https://github.com/grzegorz-raczek-unit8/claude-quota) and rewritten in Go.
 
 ## claude-quota — what it shows
@@ -27,9 +31,7 @@ SwiftBar is a free macOS app that runs scripts and binaries on a timer and displ
   - **My open PRs** — your own open PRs with a status marker: ✓ approved, ✗ changes requested, ○ review needed, ✎ draft, · open.
 - Refreshes every 5 minutes plus a manual **Refresh now** entry.
 
-It shells out to the authenticated [GitHub CLI](https://cli.github.com) (`gh`), so there is no token handling in this code. It resolves `gh` by absolute path, so it keeps working under SwiftBar's stripped environment. Results are cached for 240s in `~/.cache/pr-review/`.
-
-If `gh` is missing or you are not signed in, the dropdown shows a one-time setup hint instead — run `gh auth login` once.
+It uses the GitHub CLI (`gh`), so you need it installed and signed in — see [How pr-review works](#how-pr-review-works). If `gh` is missing or unauthenticated, the dropdown shows a one-time setup hint instead.
 
 ## Quick install
 
@@ -42,10 +44,10 @@ curl -fsSL https://raw.githubusercontent.com/ohlrogge/menu-bar-badges/main/insta
 The installer asks which plugins to install. To choose non-interactively (e.g. for `curl | bash`), set `PLUGINS`:
 
 ```sh
-# just one, or both
-curl -fsSL .../install.sh | PLUGINS=claude bash
-curl -fsSL .../install.sh | PLUGINS=gh bash
-curl -fsSL .../install.sh | PLUGINS=claude,gh bash
+URL=https://raw.githubusercontent.com/ohlrogge/menu-bar-badges/main/install.sh
+curl -fsSL "$URL" | PLUGINS=claude bash      # claude-quota only
+curl -fsSL "$URL" | PLUGINS=gh bash          # pr-review only
+curl -fsSL "$URL" | PLUGINS=claude,gh bash   # both
 ```
 
 From a checkout you can instead pass `--claude`, `--gh`, or `--all`. When macOS shows a Keychain permission dialog on the first claude-quota refresh, click **Always Allow**.
@@ -58,7 +60,7 @@ cd menu-bar-badges
 ./install.sh
 ```
 
-Both install paths set up [SwiftBar](https://github.com/swiftbar/SwiftBar) via Homebrew if it is not already installed, and add it to Login Items so the gauges come back after a reboot.
+Both install paths set up [SwiftBar](https://github.com/swiftbar/SwiftBar) via Homebrew if it is not already installed, and add it to Login Items so the badges come back after a reboot.
 
 ## How claude-quota works
 
@@ -67,6 +69,14 @@ The plugin reads your Claude Code OAuth token from the macOS Keychain (**read-on
 The binary calls `/usr/bin/security` directly (no `PATH` lookup) and writes cache files with `0600` permissions to `~/.cache/claude-quota/`.
 
 > **Note:** the usage endpoint is internal to Claude Code and undocumented, so a future Claude Code update may require a small fix here.
+
+## How pr-review works
+
+The plugin shells out to the authenticated [GitHub CLI](https://cli.github.com) (`gh`) — there is no token handling in this code. It runs a single `gh api graphql` query for both PR lists and caches the result for 240s in `~/.cache/pr-review/`.
+
+Sign in once with `gh auth login`. The query needs a token with the `repo` and `read:org` scopes — the defaults from `gh auth login` already cover this. If `gh` is missing or unauthenticated, the dropdown shows a setup hint instead of failing.
+
+Because SwiftBar runs plugins without a login shell, the binary resolves `gh` by absolute path (Homebrew, Nix profile, `~/.local/bin`) rather than relying on `PATH`, so it keeps refreshing unattended.
 
 ## Accounts
 
@@ -95,6 +105,13 @@ Delete the binaries you no longer want from your SwiftBar plugin folder (`~/.swi
 ```sh
 rm ~/.swiftbar/claude-quota.5m.cgo   # claude-quota
 rm ~/.swiftbar/pr-review.5m.cgo      # pr-review
+```
+
+To also clear cached data and config:
+
+```sh
+rm -rf ~/.cache/claude-quota ~/.cache/pr-review
+rm -rf ~/.config/claude-quota        # pinned accounts / hidden list
 ```
 
 If you no longer use SwiftBar, also remove it from System Settings → General → Login Items.
