@@ -93,7 +93,7 @@ mkdir -p "$PLUGIN_DIR"
 # and curl | bash, where BASH_SOURCE[0] is empty and $0 is just "bash").
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)
 
-REPO_URL="https://github.com/ohlrogge/claude-quota.git"
+REPO_URL="https://github.com/ohlrogge/menu-bar-badges.git"
 
 echo "Go $(go version | awk '{print $3}') found — building..."
 

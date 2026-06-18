@@ -1,4 +1,4 @@
-# claude-quota
+# menu-bar-badges
 
 [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins for the menu bar. The repo ships two:
 
@@ -36,7 +36,7 @@ If `gh` is missing or you are not signed in, the dropdown shows a one-time setup
 Requires macOS, [Homebrew](https://brew.sh), and [Go](https://go.dev/dl/). The pr-review plugin also needs the [GitHub CLI](https://cli.github.com) (`gh`), which the installer offers to set up.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ohlrogge/claude-quota/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ohlrogge/menu-bar-badges/main/install.sh | bash
 ```
 
 The installer asks which plugins to install. To choose non-interactively (e.g. for `curl | bash`), set `PLUGINS`:
@@ -53,8 +53,8 @@ From a checkout you can instead pass `--claude`, `--gh`, or `--all`. When macOS 
 ## Install from a checkout
 
 ```sh
-git clone https://github.com/ohlrogge/claude-quota.git
-cd claude-quota
+git clone https://github.com/ohlrogge/menu-bar-badges.git
+cd menu-bar-badges
 ./install.sh
 ```
 
