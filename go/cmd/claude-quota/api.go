@@ -14,7 +14,7 @@ import (
 
 const (
 	usageURL = "https://api.anthropic.com/api/oauth/usage"
-	cacheTTL = 240 * time.Second
+	cacheTTL = 30 * time.Second
 )
 
 // Window represents a quota window (e.g. five-hour or seven-day).

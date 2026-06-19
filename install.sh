@@ -137,6 +137,11 @@ RUN_IN_BASH=$(printf '<swiftbar.runInBash>false</swiftbar.runInBash>' | base64)
 build_plugin() {
     local pkg="$1" out="$2"
     local binary="$PLUGIN_DIR/$out"
+    # Remove stale binaries for this plugin (e.g. a previous refresh interval)
+    # so SwiftBar doesn't run both the old and new file as duplicate badges.
+    for stale in "$PLUGIN_DIR/$pkg".*.cgo; do
+        [ -e "$stale" ] && [ "$stale" != "$binary" ] && rm -f "$stale"
+    done
     (cd "$BUILD_DIR" && go build -o "$binary" "./cmd/$pkg")
     chmod +x "$binary"
     xattr -w "com.ameba.SwiftBar" "$RUN_IN_BASH" "$binary" 2>/dev/null || true
@@ -144,10 +149,10 @@ build_plugin() {
 }
 
 if [ "$INSTALL_CLAUDE" = true ]; then
-    build_plugin claude-quota "claude-quota.5m.cgo"
+    build_plugin claude-quota "claude-quota.1m.cgo"
 fi
 if [ "$INSTALL_GH" = true ]; then
-    build_plugin pr-review "pr-review.5m.cgo"
+    build_plugin pr-review "pr-review.1m.cgo"
 fi
 
 open -a SwiftBar

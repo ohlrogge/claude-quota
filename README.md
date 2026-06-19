@@ -9,7 +9,7 @@
 - **claude-quota** — status gauges for your Claude Code quota, one rounded bar per account.
 - **pr-review** — a badge counting GitHub PRs awaiting your review, with a dropdown of those PRs and your own open PRs.
 
-SwiftBar is a free macOS app that runs scripts and binaries on a timer and displays their output in the menu bar. Each plugin is a compiled Go binary it runs every 5 minutes. Install either or both — the [installer](#quick-install) lets you choose.
+SwiftBar is a free macOS app that runs scripts and binaries on a timer and displays their output in the menu bar. Each plugin is a compiled Go binary it runs every minute, so the badges (including the claude-quota reset countdown) stay current. Install either or both — the [installer](#quick-install) lets you choose.
 
 > Forked from [grzegorz-raczek-unit8/claude-quota](https://github.com/grzegorz-raczek-unit8/claude-quota) and rewritten in Go.
 
@@ -20,7 +20,7 @@ SwiftBar is a free macOS app that runs scripts and binaries on a timer and displ
 - When the 5-hour window is fully used, the gauge shows a **countdown to reset** (`4:28`).
 - When the **weekly limit** is hit, the gauge turns **black** with a countdown to the weekly reset (`2D`).
 - The dropdown lists full detail for every account: 5-hour and weekly windows, per-model windows where your plan reports them, extra-usage credits, and reset times.
-- Refreshes every 5 minutes plus a manual **Refresh now** entry.
+- Refreshes every minute plus a manual **Refresh now** entry.
 - If a token is stale, a **Re-authenticate** menu item opens Terminal and runs `claude` directly.
 
 ## pr-review — what it shows
@@ -29,7 +29,7 @@ SwiftBar is a free macOS app that runs scripts and binaries on a timer and displ
 - The dropdown has two sections:
   - **Review requested** — each PR awaiting your review, as a clickable link (with a `[draft]` marker where relevant).
   - **My open PRs** — your own open PRs with a status marker: ✓ approved, ✗ changes requested, ○ review needed, ✎ draft, · open.
-- Refreshes every 5 minutes plus a manual **Refresh now** entry.
+- Refreshes every minute plus a manual **Refresh now** entry.
 
 It uses the GitHub CLI (`gh`), so you need it installed and signed in — see [How pr-review works](#how-pr-review-works). If `gh` is missing or unauthenticated, the dropdown shows a one-time setup hint instead.
 
@@ -72,7 +72,7 @@ The binary calls `/usr/bin/security` directly (no `PATH` lookup) and writes cach
 
 ## How pr-review works
 
-The plugin shells out to the authenticated [GitHub CLI](https://cli.github.com) (`gh`) — there is no token handling in this code. It runs a single `gh api graphql` query for both PR lists and caches the result for 240s in `~/.cache/pr-review/`.
+The plugin shells out to the authenticated [GitHub CLI](https://cli.github.com) (`gh`) — there is no token handling in this code. It runs a single `gh api graphql` query for both PR lists and caches the result for 30s in `~/.cache/pr-review/`.
 
 Sign in once with `gh auth login`. The query needs a token with the `repo` and `read:org` scopes — the defaults from `gh auth login` already cover this. If `gh` is missing or unauthenticated, the dropdown shows a setup hint instead of failing.
 
@@ -103,8 +103,8 @@ claude-priv() { CLAUDE_CONFIG_DIR="$HOME/.claude-priv" command claude "$@"; }
 Delete the binaries you no longer want from your SwiftBar plugin folder (`~/.swiftbar` by default):
 
 ```sh
-rm ~/.swiftbar/claude-quota.5m.cgo   # claude-quota
-rm ~/.swiftbar/pr-review.5m.cgo      # pr-review
+rm ~/.swiftbar/claude-quota.1m.cgo   # claude-quota
+rm ~/.swiftbar/pr-review.1m.cgo      # pr-review
 ```
 
 To also clear cached data and config:

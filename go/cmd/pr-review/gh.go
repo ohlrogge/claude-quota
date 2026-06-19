@@ -171,10 +171,10 @@ func filterOutAuthor(prs []PR, login string) []PR {
 	return out
 }
 
-// ---- caching (mirrors the claude-quota cache: 240s TTL, atomic writes,
+// ---- caching (mirrors the claude-quota cache: short TTL, atomic writes,
 // stale-data-beats-error on transient failures) ----
 
-const cacheTTL = 240 * time.Second
+const cacheTTL = 30 * time.Second
 
 type cacheEntry struct {
 	FetchedAt float64 `json:"fetched_at"`

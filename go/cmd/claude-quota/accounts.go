@@ -141,8 +141,8 @@ type keychainCreds struct {
 	} `json:"claudeAiOauth"`
 }
 
-// renewBefore is how far ahead of expiry we proactively renew. It is at least
-// the SwiftBar refresh interval (5m) so a token never expires between runs.
+// renewBefore is how far ahead of expiry we proactively renew, comfortably
+// larger than the SwiftBar refresh interval so a token never expires between runs.
 const renewBefore = 10 * time.Minute
 
 // readKeychainToken reads the OAuth access token and its expiry from the macOS
