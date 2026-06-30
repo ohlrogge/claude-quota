@@ -60,7 +60,9 @@ func configuredUser() string {
 func tokenForUser(gh, login string) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	out, err := exec.CommandContext(ctx, gh, "auth", "token", "--user", login).Output()
+	cmd := exec.CommandContext(ctx, gh, "auth", "token", "--user", login)
+	cmd.Dir = os.TempDir()
+	out, err := cmd.Output()
 	if err != nil {
 		return ""
 	}
@@ -133,7 +135,9 @@ type graphqlResp struct {
 func currentLogin(gh string) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	out, err := exec.CommandContext(ctx, gh, "api", "user", "-q", ".login").Output()
+	cmd := exec.CommandContext(ctx, gh, "api", "user", "-q", ".login")
+	cmd.Dir = os.TempDir()
+	out, err := cmd.Output()
 	if err != nil {
 		return ""
 	}
@@ -157,6 +161,7 @@ func fetchGitHub() (*Data, error) {
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, gh, "api", "graphql", "-f", "query="+query)
+	cmd.Dir = os.TempDir()
 	if me != "" {
 		if tok := tokenForUser(gh, me); tok != "" {
 			cmd.Env = append(os.Environ(), "GH_TOKEN="+tok)

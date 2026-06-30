@@ -45,6 +45,7 @@ func keychainEntryExists(service string) bool {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, "/usr/bin/security", "find-generic-password", "-s", service)
+	cmd.Dir = os.TempDir()
 	cmd.Stdout = io.Discard
 	cmd.Stderr = io.Discard
 	return cmd.Run() == nil
@@ -154,6 +155,7 @@ func readKeychainToken(configDir string) (token string, expiresAt float64, err e
 	defer cancel()
 	cmd := exec.CommandContext(ctx, "/usr/bin/security",
 		"find-generic-password", "-s", service, "-w")
+	cmd.Dir = os.TempDir()
 	out, err := cmd.Output()
 	if err != nil {
 		return "", 0, fmt.Errorf("no keychain entry — log in with that CLI once")
@@ -199,6 +201,7 @@ func renewToken(configDir string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, claudePath, "-p", "")
+	cmd.Dir = os.TempDir()
 	cmd.Env = append(os.Environ(), "CLAUDE_CONFIG_DIR="+configDir)
 	cmd.Stdout = io.Discard
 	cmd.Stderr = io.Discard
