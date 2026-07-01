@@ -78,6 +78,22 @@ Sign in once with `gh auth login`. The query needs a token with the `repo` and `
 
 Because SwiftBar runs plugins without a login shell, the binary resolves `gh` by absolute path (Homebrew, Nix profile, `~/.local/bin`) rather than relying on `PATH`, so it keeps refreshing unattended.
 
+### Multiple GitHub accounts
+
+If you have more than one account logged into `gh`, the installer asks which one to use and writes your choice to `~/.config/pr-review/user`. The plugin then fetches that account's token via `gh auth token --user` and uses it for all API calls, so both the authentication and the PR search target the right account.
+
+To change the pinned account after install, edit the file directly:
+
+```sh
+echo "your-work-username" > ~/.config/pr-review/user
+```
+
+To revert to the default active `gh` account, delete the file:
+
+```sh
+rm ~/.config/pr-review/user
+```
+
 ## Accounts
 
 By default the plugin auto-discovers accounts: every `~/.claude` / `~/.claude-*` config directory that has a Claude Code Keychain entry gets a gauge, labelled by the directory suffix (`~/.claude-work` → `W`). A single auto-discovered account shows no letter label — just the bar.
@@ -100,18 +116,10 @@ claude-priv() { CLAUDE_CONFIG_DIR="$HOME/.claude-priv" command claude "$@"; }
 
 ## Uninstall
 
-Delete the binaries you no longer want from your SwiftBar plugin folder (`~/.swiftbar` by default):
+Run the uninstall script from a checkout — it asks about each item one by one:
 
 ```sh
-rm ~/.swiftbar/claude-quota.1m.cgo   # claude-quota
-rm ~/.swiftbar/pr-review.1m.cgo      # pr-review
+./uninstall.sh
 ```
 
-To also clear cached data and config:
-
-```sh
-rm -rf ~/.cache/claude-quota ~/.cache/pr-review
-rm -rf ~/.config/claude-quota        # pinned accounts / hidden list
-```
-
-If you no longer use SwiftBar, also remove it from System Settings → General → Login Items.
+It covers plugin binaries, cached data, config files, the SwiftBar login item, and optionally the tools installed by `install.sh` (gh, SwiftBar, Go).
